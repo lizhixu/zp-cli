@@ -1,0 +1,27 @@
+{
+  "name": "zp-cli",
+  "version": "1.0.0",
+  "description": "一个高效的命令行部署工具，支持将本地代码通过 SSH 部署到远程服务器",
+  "main": "bin/zp-cli.js",
+  "bin": {
+    "zp-cli": "./bin/zp-cli.js"
+  },
+  "scripts": {
+    "test": "node bin/zp-cli.js --help"
+  },
+  "keywords": [
+    "cli",
+    "deploy",
+    "ssh",
+    "upload",
+    "server"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^9.4.1",
+    "inquirer": "^8.2.5",
+    "node-ssh": "^12.0.2"
+  }
+}
