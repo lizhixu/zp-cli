@@ -5,7 +5,7 @@
 ## 安装
 
 ```bash
-npm install -g zp-cli
+npm install -g @wxuns/zp-cli
 ```
 
 ## 快速开始
