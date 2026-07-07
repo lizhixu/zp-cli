@@ -137,6 +137,21 @@ zp-cli upload <路径> [选项]
 
 上传 `./api/main.py` → 部署到 `backend-server` 的 `/opt/services/api/main.py`
 
+**支持多级子目录匹配：**
+
+```json
+"subdirectoryMappings": {
+  "hw/data": {
+    "serverAlias": "hw",
+    "remotePath": "/home/vsp/vsc/tomcat/webapps/VSC/EPG/jsp/defaultv6hy/data"
+  }
+}
+```
+
+上传 `./hw/data/index.json` → 部署到 `hw` 的 `/home/vsp/vsc/tomcat/webapps/VSC/EPG/jsp/defaultv6hy/data/index.json`
+
+> 多个映射同时命中时，会优先使用最长匹配。例如同时存在 `hw` 和 `hw/data`，上传 `./hw/data/a.json` 会优先匹配 `hw/data`。
+
 **对象格式字段说明：**
 
 | 字段 | 类型 | 必填 | 说明 |
