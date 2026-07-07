@@ -1,15 +1,11 @@
 name: Publish to npm
 
 on:
-  # 推送版本标签时触发 (例如 v1.0.0, v1.1.0)
   push:
     tags:
       - 'v*'
-
-  # 也可以手动触发
   workflow_dispatch:
 
-# 需要 id-token 权限用于 OIDC 认证
 permissions:
   contents: write
   id-token: write
@@ -17,34 +13,28 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    
+
     steps:
-      # 1. 检出代码
       - name: Checkout code
         uses: actions/checkout@v5
 
-      # 2. 设置 Node.js 环境
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
           node-version: '22'
           registry-url: 'https://registry.npmjs.org'
 
-      # 3. 安装依赖
-      - name: Install dependencies
-        run: npm install
+      # npm Trusted Publishing / OIDC 需要较新的 npm CLI
+      - name: Update npm
+        run: npm install -g npm@latest
 
-      # 4. 发布到 npm (使用 OIDC 认证，无需 NPM_TOKEN)
+      - name: Install dependencies
+        run: npm ci
+
       - name: Publish to npm
         run: npm publish --access public --provenance
 
-      # 5. 创建 GitHub Release (可选)
       - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
+          generate_release_notes: true
