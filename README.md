@@ -65,7 +65,8 @@ zp-cli upload <路径> [选项]
       "password": "your-password",      // 密码认证（与 privateKeyPath 二选一）
       "privateKeyPath": "~/.ssh/id_rsa",// 私钥认证（与 password 二选一）
       "defaultRemotePath": "/home/www", // 默认远程目录（可被 --remote-path 覆盖）
-      "rootPassword": ""                // root 密码，需要 su root 时填写
+      "rootPassword": "",               // root 密码，需要 su root 时填写
+      "reuseMapping": ""                // 复用其他服务器别名的路径映射，例如 hw2 复用 hw
     }
   ],
 
@@ -92,6 +93,7 @@ zp-cli upload <路径> [选项]
 | `privateKeyPath` | string | **条件必填** | SSH 私钥路径，与 `password` 至少填一个。支持 `~` |
 | `defaultRemotePath` | string | 选填 | 默认远程部署目录，可被 `--remote-path` 覆盖 |
 | `rootPassword` | string | 选填 | root 密码，需要提权操作时填写 |
+| `reuseMapping` | string | 选填 | 复用其他服务器别名的路径映射。例如服务器 `hw2` 配置 `"reuseMapping": "hw"` 后，`--server hw2` 会使用 `targets.hw` 的远程路径 |
 
 > **条件必填**：`password` 和 `privateKeyPath` 至少填一个。同时存在时优先使用 `privateKeyPath`。
 
@@ -184,6 +186,30 @@ zp-cli up ./hw/data --server zx
 ```
 
 如果不指定 `--server` 且同一子目录配置了多个目标，会提示你指定服务器。
+
+如果多台服务器路径结构相同，可以在服务器配置里使用 `reuseMapping` 复用路径映射：
+
+```json
+"servers": [
+  {
+    "alias": "hw",
+    "host": "117.146.223.166"
+  },
+  {
+    "alias": "hw2",
+    "host": "117.146.223.143",
+    "reuseMapping": "hw"
+  }
+]
+```
+
+此时执行：
+
+```bash
+zp-cli up ./hw/data --server hw2
+```
+
+会连接 `hw2` 服务器，但路径映射使用 `targets.hw`。
 
 **对象格式字段说明：**
 
