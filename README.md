@@ -153,6 +153,8 @@ zp-cli upload <路径> [选项]
 上传 `./hw/data/index.json` → 部署到 `hw` 的 `/home/vsp/vsc/tomcat/webapps/VSC/EPG/jsp/defaultv6hy/data/index.json`
 
 > 多个映射同时命中时，会优先使用最长匹配。例如同时存在 `hw` 和 `hw/data`，上传 `./hw/data/a.json` 会优先匹配 `hw/data`。
+>
+> 映射 key 支持仓库根目录名前缀。例如 Git 根目录为 `specialArea` 时，`hw/hy` 和 `specialArea/hw/hy` 都可以匹配本地 `./hw/hy`。
 
 **同一个子目录部署到不同服务器/路径：**
 
