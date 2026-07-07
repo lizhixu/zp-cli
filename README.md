@@ -152,12 +152,47 @@ zp-cli upload <路径> [选项]
 
 > 多个映射同时命中时，会优先使用最长匹配。例如同时存在 `hw` 和 `hw/data`，上传 `./hw/data/a.json` 会优先匹配 `hw/data`。
 
+**同一个子目录部署到不同服务器/路径：**
+
+```json
+"subdirectoryMappings": {
+  "hw/data": {
+    "targets": {
+      "hw": "/home/vsp/vsc/tomcat/webapps/VSC/EPG/jsp/defaultv6hy/data",
+      "zx": "/home/zxin10/was/tomcat/webapps/iptvepg/frame1003/main/data"
+    }
+  }
+}
+```
+
+使用时通过 `--server` 选择目标：
+
+```bash
+zp-cli up ./hw/data --server hw
+zp-cli up ./hw/data --server zx
+```
+
+也支持简写格式：
+
+```json
+"subdirectoryMappings": {
+  "hw/data": {
+    "hw": "/home/vsp/vsc/tomcat/webapps/VSC/EPG/jsp/defaultv6hy/data",
+    "zx": "/home/zxin10/was/tomcat/webapps/iptvepg/frame1003/main/data"
+  }
+}
+```
+
+如果不指定 `--server` 且同一子目录配置了多个目标，会提示你指定服务器。
+
 **对象格式字段说明：**
 
 | 字段 | 类型 | 必填 | 说明 |
 |------|------|------|------|
-| `serverAlias` | string | **必填** | 目标服务器别名 |
-| `remotePath` | string | **必填** | 该子目录在目标服务器上的部署路径 |
+| `serverAlias` | string | 条件必填 | 单目标对象格式中的目标服务器别名 |
+| `remotePath` | string | 条件必填 | 单目标对象格式中的部署路径 |
+| `targets` | object | 条件必填 | 多目标格式，key 为服务器别名，value 为部署路径或 `{ remotePath }` 对象 |
+| `defaultServerAlias` | string | 选填 | 多目标格式未指定 `--server` 时默认使用的服务器别名 |
 
 **完整示例：**
 
