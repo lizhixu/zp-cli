@@ -122,6 +122,10 @@ $history = zp_history_list();
     aside li .name{font-weight:600;word-break:break-all}
     aside li .meta{color:var(--color-muted);font-size:12px;margin-top:6px}
     aside form{margin-top:10px}
+    aside .name a{color:#1d4ed8;text-decoration:none;font-weight:600}
+    aside .name a:hover{text-decoration:underline}
+    .history-ops{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}
+    .history-ops .outline{padding:6px 10px;border-radius:7px}
     aside .empty{padding:40px 12px;text-align:center;color:var(--color-muted);border:1px dashed var(--color-border);border-radius:12px}
     @media(max-width:1100px){main{grid-template-columns:1fr}}
   </style>
@@ -162,21 +166,30 @@ $history = zp_history_list();
   </section>
   <aside class="card">
     <h3>历史版本</h3>
-    <p class="muted">保存或 API push 前会自动备份，超过配置数量后自动清理。</p>
+    <p class="muted">保存或 API push 前会自动备份，超过配置数量后自动清理。点击标题或“预览”可在左侧查看。</p>
     <?php if (!$history): ?>
       <div class="empty">暂无历史版本</div>
     <?php else: ?>
       <ul>
-      <?php foreach ($history as $index => $item): ?>
+      <?php foreach ($history as $item): ?>
+        <?php
+          $historyContent = file_get_contents(zp_config()['history_dir'] . '/' . $item['name']);
+          $encodedHistory = rawurlencode($historyContent ?? '');
+        ?>
         <li>
-          <div class="name"><?= htmlspecialchars($item['name']) ?></div>
+          <div class="name">
+            <a href="#" onclick="loadHistoryContent('<?= $encodedHistory ?>', '<?= htmlspecialchars($item['name'], ENT_QUOTES) ?>'); return false;"><?= htmlspecialchars($item['name']) ?></a>
+          </div>
           <div class="meta"><?= htmlspecialchars($item['time']) ?> · <?= htmlspecialchars((string)$item['size']) ?> bytes</div>
-          <form method="post" onsubmit="return confirm('确认恢复该历史版本？');">
-            <input type="hidden" name="action" value="restore">
-            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(zp_csrf_token()) ?>">
-            <input type="hidden" name="file" value="<?= htmlspecialchars($item['name']) ?>">
-            <button type="submit">恢复</button>
-          </form>
+          <div class="history-ops">
+            <a href="#" class="btn outline" onclick="loadHistoryContent('<?= $encodedHistory ?>', '<?= htmlspecialchars($item['name'], ENT_QUOTES) ?>'); return false;">预览</a>
+            <form method="post" onsubmit="return confirm('确认恢复该历史版本？');">
+              <input type="hidden" name="action" value="restore">
+              <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(zp_csrf_token()) ?>">
+              <input type="hidden" name="file" value="<?= htmlspecialchars($item['name']) ?>">
+              <button type="submit" class="danger">恢复</button>
+            </form>
+          </div>
         </li>
       <?php endforeach; ?>
       </ul>
@@ -191,6 +204,17 @@ $history = zp_history_list();
     const value = editorInstance.getValue();
     document.getElementById('hidden-content').value = value;
     return true;
+  }
+
+  function loadHistoryContent(encodedContent, name) {
+    if (!editorInstance) return;
+    try {
+      const text = decodeURIComponent(encodedContent.replace(/\+/g, '%20'));
+      editorInstance.setValue(text);
+      document.getElementById('tag-file').textContent = '查看历史 ' + name;
+    } catch (e) {
+      alert('历史内容加载失败：' + e.message);
+    }
   }
 
   function saveFromButton() {
