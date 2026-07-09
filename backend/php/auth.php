@@ -175,3 +175,20 @@ function zp_restore_history($name)
     zp_write_config($content);
     return $content;
 }
+
+function zp_delete_history($name)
+{
+    if (!zp_safe_history_name($name)) {
+        throw new RuntimeException('非法历史文件名');
+    }
+
+    $config = zp_config();
+    $file = $config['history_dir'] . '/' . $name;
+    if (!file_exists($file)) {
+        throw new RuntimeException('历史文件不存在');
+    }
+
+    if (!unlink($file)) {
+        throw new RuntimeException('历史版本删除失败');
+    }
+}

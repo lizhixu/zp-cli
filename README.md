@@ -1,6 +1,6 @@
 # zp-cli
 
-将本地代码通过 SSH 部署到远程服务器的命令行工具。支持单文件/目录上传，支持同一仓库不同子目录部署到不同服务器，并提供独立 HTTP 服务用于快速管理和同步 `~/.zp-cli.json`。
+将本地代码通过 SSH 部署到远程服务器的命令行工具。支持单文件/目录上传，支持同一仓库不同子目录部署到不同服务器，并支持通过同步服务管理 `~/.zp-cli.json`。
 
 ## 安装
 
@@ -49,7 +49,7 @@ zp-cli upload <路径> [选项]
 
 ### sync 命令
 
-`sync` 使用独立 HTTP 服务管理 `~/.zp-cli.json`，不依赖 SSH 部署服务器。
+`sync` 用于管理 `~/.zp-cli.json` 的远端同步副本，不依赖 SSH 部署服务器。
 
 ```bash
 zp-cli sync push                      # 推送本地 ~/.zp-cli.json 到同步服务
@@ -76,8 +76,8 @@ zp-cli s pull
 ```jsonc
 {
   "syncService": {
-    "url": "https://your-domain.com/zp-sync/api.php", // 独立同步服务 API 地址
-    "apiPassword": "your-api-password"                 // CLI API 密码
+    "url": "https://your-domain.com/zp-sync/api.php", // 同步服务 API 地址
+    "apiPassword": "your-api-password"                 // 同步服务 API 密码
   },
 
   "servers": [
@@ -109,8 +109,8 @@ zp-cli s pull
 
 | 字段 | 类型 | 必填 | 说明 |
 |------|------|------|------|
-| `url` | string | 选填 | 独立 PHP 同步服务的 API 地址，例如 `https://your-domain.com/zp-sync/api.php` |
-| `apiPassword` | string | 选填 | CLI 调用同步服务的 API 密码。仅使用 `sync` 命令时需要 |
+| `url` | string | 选填 | 同步服务 API 地址，例如 `https://your-domain.com/zp-sync/api.php` |
+| `apiPassword` | string | 选填 | 调用同步服务的 API 密码。仅使用 `sync` 命令时需要 |
 
 > `syncService` 只用于同步管理 `~/.zp-cli.json`，和 SSH 部署服务器无关。
 
@@ -336,67 +336,6 @@ git@gitlab.com:group/sub/repo.git    ←→  https://gitlab.com/group/sub/repo.g
 
 ---
 
-## 独立同步服务 / PHP 管理面板
-
-项目内置 `backend/php`，可以部署成独立 HTTP 服务，用来管理和同步 `.zp-cli.json`。
-
-### 部署 PHP 服务
-
-将目录上传到 PHP Web 服务目录：
-
-```text
-backend/php
-```
-
-访问管理面板：
-
-```text
-https://your-domain.com/zp-sync/index.php
-```
-
-CLI API 地址：
-
-```text
-https://your-domain.com/zp-sync/api.php
-```
-
-### 修改默认密码
-
-默认 Web 登录密码和 API 密码都是：
-
-```text
-password
-```
-
-上线前必须修改 `backend/php/config.php` 里的 hash：
-
-```bash
-php -r "echo password_hash('你的管理密码', PASSWORD_DEFAULT), PHP_EOL;"
-php -r "echo password_hash('你的 API 密码', PASSWORD_DEFAULT), PHP_EOL;"
-```
-
-### CLI 同步配置
-
-本地 `~/.zp-cli.json` 中添加：
-
-```json
-"syncService": {
-  "url": "https://your-domain.com/zp-sync/api.php",
-  "apiPassword": "你的 API 密码"
-}
-```
-
-然后使用：
-
-```bash
-zp-cli sync push
-zp-cli sync pull
-zp-cli sync history
-zp-cli sync restore .zp-cli-20260709-120000.json
-```
-
----
-
 ## 部署流程
 
 执行 `zp-cli upload` 时的完整流程：
@@ -455,7 +394,7 @@ zp-cli/
 │   └── utils/
 │       └── logger.js           # 终端彩色输出
 ├── backend/
-│   └── php/                    # 独立 PHP 配置管理面板和同步 API
+│   └── php/                    # 同步服务参考实现
 └── README.md
 ```
 
