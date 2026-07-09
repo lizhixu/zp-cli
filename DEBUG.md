@@ -17,6 +17,7 @@ npm link
 zp-cli --help
 zp-cli init
 zp-cli upload ./some-file --server <服务器别名> --remote-path /tmp/test
+zp-cli sync history
 ```
 
 ### 取消链接
@@ -53,6 +54,7 @@ which zp-cli
 zp-cli --help
 zp-cli upload --help
 zp-cli init --help
+zp-cli sync history
 
 # 版本
 zp-cli -v
@@ -87,7 +89,41 @@ zp-cli upload ./dist --server <服务器别名> --remote-path /tmp/dist
 zp-cli upload ./vue_zte3.0/dist
 ```
 
-### 4. 查看部署结果
+### 4. 同步服务测试
+
+先在 `~/.zp-cli.json` 中配置：
+
+```json
+"syncService": {
+  "url": "http://127.0.0.1:8080/api.php",
+  "apiPassword": "password"
+}
+```
+
+启动 PHP 内置服务：
+
+```bash
+cd backend/php
+php -S 127.0.0.1:8080
+```
+
+测试 CLI：
+
+```bash
+zp-cli sync push
+zp-cli sync history
+zp-cli sync pull
+```
+
+浏览器访问：
+
+```text
+http://127.0.0.1:8080/index.php
+```
+
+默认用户名/密码：`admin` / `password`。
+
+### 5. 查看部署结果
 
 ```bash
 # 登录服务器验证（根据实际配置替换信息）

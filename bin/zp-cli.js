@@ -39,6 +39,16 @@ program
     await uploadCmd.run(localPath, options);
   });
 
+// ========== sync 命令 ==========
+program
+  .command('sync <命令> [历史文件名]')
+  .alias('s')
+  .description('通过独立同步服务管理 ~/.zp-cli.json')
+  .action(async (command, file) => {
+    const syncCmd = require('../lib/commands/sync');
+    await syncCmd.run(command, file);
+  });
+
 // ========== config 命令（查看/管理配置） ==========
 const configCmd = program
   .command('config')
