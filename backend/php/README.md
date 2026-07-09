@@ -28,6 +28,8 @@ CLI API 地址为：
 https://your-domain.com/zp-sync/api.php
 ```
 
+管理面板使用了 Monaco Editor（通过 jsDelivr CDN）。如果内网无法访问 CDN，请自行替换 `index.php` 中的 `loader.js` 地址。
+
 ## 修改密码
 
 默认 Web 登录密码和 API 密码都是：

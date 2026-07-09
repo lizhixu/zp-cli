@@ -44,6 +44,20 @@ function zp_require_login()
     }
 }
 
+function zp_csrf_token()
+{
+    if (empty($_SESSION['zp_csrf_token'])) {
+        $_SESSION['zp_csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['zp_csrf_token'];
+}
+
+function zp_verify_csrf_token()
+{
+    $token = $_POST['csrf_token'] ?? '';
+    return is_string($token) && hash_equals(zp_csrf_token(), $token);
+}
+
 function zp_check_admin_login($username, $password)
 {
     $config = zp_config();
