@@ -102,6 +102,7 @@ $history = zp_history_list();
     header strong{font-size:18px;letter-spacing:.02em}
     header .ops{display:flex;gap:10px;align-items:center}
     main{padding:22px 24px 32px;display:grid;grid-template-columns:minmax(480px,1fr) 420px;gap:22px;align-items:start}
+    .left-column{position:sticky;top:82px}
     .card{background:var(--color-card);border:1px solid var(--color-border);border-radius:14px;padding:20px;box-shadow:0 12px 30px rgba(17,24,39,.06),0 1px 3px rgba(17,24,39,.04)}
     h3{margin:0 0 12px;font-size:17px;display:flex;align-items:center;gap:8px}
     .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
@@ -116,7 +117,7 @@ $history = zp_history_list();
     .status{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 0}
     .tag{display:inline-block;background:#eef2ff;color:#3730a3;border:1px solid #c7d2fe;border-radius:999px;padding:3px 9px;font-size:12px}
     #editor-wrap{border:1px solid #111827;border-radius:12px;overflow:hidden;background:#0f1117;height:min(78vh,960px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.03)}
-    aside ul{list-style:none;margin:0;padding:0}
+    aside ul{list-style:none;margin:0;padding:0;overflow-y:auto;max-height:calc(100vh - 220px)}
     aside li{padding:12px 12px;border:1px solid var(--color-border);border-radius:12px;background:#fff;margin-bottom:10px;transition:box-shadow .2s,border-color .2s}
     aside li:hover{border-color:#93c5fd;box-shadow:0 8px 20px rgba(147,197,253,.18)}
     aside li .name{font-weight:600;word-break:break-all}
@@ -127,7 +128,7 @@ $history = zp_history_list();
     .history-ops{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}
     .history-ops .outline{padding:6px 10px;border-radius:7px}
     aside .empty{padding:40px 12px;text-align:center;color:var(--color-muted);border:1px dashed var(--color-border);border-radius:12px}
-    @media(max-width:1100px){main{grid-template-columns:1fr}}
+    @media(max-width:1100px){main{grid-template-columns:1fr}.left-column{position:static}}
   </style>
   <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
   <script>
@@ -144,7 +145,7 @@ $history = zp_history_list();
   </div>
 </header>
 <main>
-  <section class="card">
+  <section class="card left-column">
     <h3>当前 .zp-cli.json</h3>
     <?php if ($message): ?><p class="msg"><?= htmlspecialchars($message) ?></p><?php endif; ?>
     <?php if ($error): ?><p class="err"><?= htmlspecialchars($error) ?></p><?php endif; ?>
