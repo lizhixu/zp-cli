@@ -1,6 +1,6 @@
 {
   "name": "@wxuns/zp-cli",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "一个高效的命令行部署工具，支持将本地代码通过 SSH 部署到远程服务器",
   "repository": {
     "type": "git",
