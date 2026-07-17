@@ -31,6 +31,8 @@ zp-cli upload ./dist
 |------|------|
 | `zp-cli init` | 生成 demo 配置文件 `~/.zp-cli.json` |
 | `zp-cli upload <路径>` | 上传文件或目录到远程服务器 |
+| `zp-cli install menu` | 安装 Windows 右键菜单 |
+| `zp-cli uninstall menu` | 卸载 Windows 右键菜单 |
 | `zp-cli sync push/pull/history/restore` | 通过独立同步服务管理 `~/.zp-cli.json` |
 | `zp-cli config show` | 查看当前配置内容 |
 | `zp-cli config path` | 显示配置文件路径 |
@@ -40,12 +42,36 @@ zp-cli upload ./dist
 ### upload 命令选项
 
 ```bash
-zp-cli upload <路径> [选项]
+zp-cli upload <路径...> [选项]
 
 选项:
   -s, --server <别名>       指定目标服务器（覆盖自动匹配）
   -r, --remote-path <路径>  指定远程目标路径（覆盖配置中的默认值）
 ```
+
+支持一次上传多个文件：
+
+```bash
+zp-cli up ./dist/index.html ./dist/style.css ./dist/app.js
+```
+
+### Windows 右键菜单
+
+安装后可在文件资源管理器中右键直接上传，无需打开终端。
+
+```bash
+# 安装右键菜单（需管理员权限运行终端）
+zp-cli install menu
+
+# 卸载右键菜单
+zp-cli uninstall menu
+```
+
+安装后右键任意文件、文件夹或文件夹空白处，即可看到「用 zp-cli 上传」菜单项。
+
+> 仅支持 Windows 系统。脚本安装在 `~/.zp-cli/zp-cli-upload.cmd`。
+>
+> Windows 11 用户需要点击「显示更多选项」或按住 Shift 再右键才能看到菜单项。
 
 ### sync 命令
 
@@ -220,7 +246,7 @@ zp-cli up ./hw/data --server zx
 }
 ```
 
-如果不指定 `--server` 且同一子目录配置了多个目标，会提示你指定服务器。
+如果不指定 `--server` 且同一子目录配置了多个目标，默认使用第一条并给出提示。可通过 `--server` 指定其他目标。
 
 如果多台服务器路径结构相同，可以在服务器配置里使用 `reuseMapping` 复用路径映射：
 
@@ -386,6 +412,7 @@ zp-cli/
 │   ├── commands/
 │   │   ├── init.js             # 生成 demo 配置
 │   │   ├── upload.js           # 上传部署逻辑
+│   │   ├── install.js          # 右键菜单安装/卸载
 │   │   └── sync.js             # 独立配置同步服务命令
 │   ├── core/
 │   │   ├── configManager.js    # 配置读写

@@ -29,14 +29,14 @@ program
 
 // ========== upload 命令 ==========
 program
-  .command('upload <路径>')
+  .command('upload <路径...>')
   .alias('up')
   .description('上传文件或目录到远程服务器')
   .option('-s, --server <别名>', '指定目标服务器别名')
   .option('-r, --remote-path <路径>', '指定远程目标路径（覆盖配置中的默认值）')
-  .action(async (localPath, options) => {
+  .action(async (paths, options) => {
     const uploadCmd = require('../lib/commands/upload');
-    await uploadCmd.run(localPath, options);
+    await uploadCmd.run(paths, options);
   });
 
 // ========== sync 命令 ==========
@@ -77,6 +77,36 @@ configCmd
   .description('显示配置文件路径')
   .action(() => {
     logger.log(configManager.getConfigPath());
+  });
+
+// ========== install 命令（系统集成） ==========
+program
+  .command('install <target>')
+  .description('安装系统集成（menu: 右键菜单）')
+  .action(async (target) => {
+    if (target === 'menu') {
+      const installCmd = require('../lib/commands/install');
+      installCmd.installMenu();
+    } else {
+      logger.error(`未知的安装目标: ${target}`);
+      logger.log('可用目标: menu（右键菜单）');
+      process.exit(1);
+    }
+  });
+
+// ========== uninstall 命令（卸载集成） ==========
+program
+  .command('uninstall <target>')
+  .description('卸载系统集成（menu: 右键菜单）')
+  .action(async (target) => {
+    if (target === 'menu') {
+      const installCmd = require('../lib/commands/install');
+      installCmd.uninstallMenu();
+    } else {
+      logger.error(`未知的卸载目标: ${target}`);
+      logger.log('可用目标: menu（右键菜单）');
+      process.exit(1);
+    }
   });
 
 // ========== 未提供子命令时显示帮助 ==========
